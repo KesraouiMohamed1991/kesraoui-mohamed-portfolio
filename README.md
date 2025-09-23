@@ -14,11 +14,15 @@ Portfolio minimaliste et performant construit avec Next.js 15, TypeScript et Tai
 ## 🚀 Démarrage
 
 ```bash
-# Installer les dépendances
-pnpm i   # ou npm install / yarn
+# Installer les dépendances (recommandé)
+yarn install
 
 # Lancer en dev
-pnpm dev # ou npm run dev / yarn dev
+yarn dev
+
+# (Alternatives)
+# npm install && npm run dev
+# pnpm install && pnpm dev
 ```
 
 Ouvre http://localhost:3000.
