@@ -68,7 +68,9 @@ export default function Home() {
       <main className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-16">
         <header
           id="intro"
-          ref={(el) => (sectionsRef.current[0] = el)}
+          ref={(el: HTMLElement | null) => {
+            sectionsRef.current[0] = el
+          }}
           className="relative overflow-hidden min-h-screen flex items-center"
         >
           {/* decorative background removed on request */}
@@ -133,7 +135,9 @@ export default function Home() {
         {/* Projects */}
         <section
           id="projects"
-          ref={(el) => (sectionsRef.current[1] = el)}
+          ref={(el: HTMLElement | null) => {
+            sectionsRef.current[1] = el
+          }}
           className="min-h-screen py-20 sm:py-32"
         >
           <div className="space-y-12 sm:space-y-16">
@@ -189,7 +193,9 @@ export default function Home() {
 
         <section
           id="work"
-          ref={(el) => (sectionsRef.current[2] = el)}
+          ref={(el: HTMLElement | null) => {
+            sectionsRef.current[2] = el
+          }}
           className="min-h-screen py-20 sm:py-32"
         >
           <div className="space-y-12 sm:space-y-16">
@@ -237,7 +243,9 @@ export default function Home() {
 
         <section
           id="thoughts"
-          ref={(el) => (sectionsRef.current[3] = el)}
+          ref={(el: HTMLElement | null) => {
+            sectionsRef.current[3] = el
+          }}
           className="min-h-screen py-20 sm:py-32"
         >
           <div className="space-y-12 sm:space-y-16">
@@ -289,7 +297,9 @@ export default function Home() {
         {/* Recommendations */}
         <section
           id="recommendations"
-          ref={(el) => (sectionsRef.current[4] = el)}
+          ref={(el: HTMLElement | null) => {
+            sectionsRef.current[4] = el
+          }}
           className="min-h-screen py-20 sm:py-32"
         >
           <div className="space-y-12 sm:space-y-16">
@@ -328,7 +338,13 @@ export default function Home() {
         </section>
 
 
-        <section id="connect" ref={(el) => (sectionsRef.current[5] = el)} className="py-20 sm:py-32">
+        <section
+          id="connect"
+          ref={(el: HTMLElement | null) => {
+            sectionsRef.current[5] = el
+          }}
+          className="py-20 sm:py-32"
+        >
           <div className="grid lg:grid-cols-2 gap-12 sm:gap-16">
             <div className="space-y-6 sm:space-y-8">
               <h2 className="text-3xl sm:text-4xl font-light">Entrons en contact</h2>

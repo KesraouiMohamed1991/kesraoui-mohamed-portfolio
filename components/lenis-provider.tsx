@@ -27,7 +27,6 @@ export function LenisProvider({ children }: { children?: React.ReactNode }) {
     setInstance(lenis)
 
     const raf = (time: number) => {
-      // @ts-expect-error lenis types may vary by version
       lenis.raf(time)
       rafRef.current = requestAnimationFrame(raf)
     }
@@ -35,7 +34,6 @@ export function LenisProvider({ children }: { children?: React.ReactNode }) {
 
     return () => {
       cancelAnimationFrame(rafRef.current)
-      // @ts-expect-error destroy exists at runtime
       lenis.destroy?.()
       setInstance(null)
     }

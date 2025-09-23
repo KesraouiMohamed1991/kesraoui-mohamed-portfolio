@@ -2,14 +2,15 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { posts, profile, type ContentBlock } from "@/lib/data"
 
-type Props = { params: { slug: string } }
+type Params = Promise<{ slug: string }>
 
 export function generateStaticParams() {
   return posts.map((p) => ({ slug: p.slug }))
 }
 
-export function generateMetadata({ params }: Props): Metadata {
-  const post = posts.find((p) => p.slug === params.slug)
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { slug } = await params
+  const post = posts.find((p) => p.slug === slug)
   if (!post) return {}
   return {
     title: post.title,
@@ -17,8 +18,9 @@ export function generateMetadata({ params }: Props): Metadata {
   }
 }
 
-export default function BlogPost({ params }: Props) {
-  const post = posts.find((p) => p.slug === params.slug)
+export default async function BlogPost({ params }: { params: Params }) {
+  const { slug } = await params
+  const post = posts.find((p) => p.slug === slug)
   if (!post) return notFound()
 
   const renderBlock = (b: ContentBlock, i: number) => {
