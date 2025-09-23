@@ -39,7 +39,8 @@ export type Project = {
 export type Recommendation = {
   name: string
   affiliation?: string
-  quote: string
+  quote: string,
+  link?: string
 }
 
 export const profile = {
@@ -267,12 +268,15 @@ export const recommendations: Recommendation[] = [
   {
     name: "Amaury Patris",
     affiliation: "AP Développement",
-    quote: "Mohamed livre un code propre et fiable, avec un vrai souci de l'expérience utilisateur."
+    link:"https://ap-developpement.com/",
+
+    quote: "Mohamed livre un code propre et fiable, avec un vrai souci de l'expérience utilisateur.",
   },
  
   {
     name: "David Freau",
     affiliation: "La Capsule",
+    link:"https://lacapsule.academy/contact",
     quote: "Curieux et rigoureux, il monte vite en compétence et partage volontiers ses apprentissages."
   },
   

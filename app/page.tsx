@@ -299,13 +299,27 @@ export default function Home() {
               {recommendations.map((r, i) => (
                 <article key={i} className="group p-6 sm:p-8 border border-border rounded-lg hover:border-muted-foreground/50 transition-all duration-500 hover:shadow-lg">
                   <div data-reveal>
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-medium">{r.name}</h3>
-                    {r.affiliation ? (
-                      <div className="text-sm text-muted-foreground">{r.affiliation}</div>
-                    ) : null}
-                    <p className="text-muted-foreground leading-relaxed">“{r.quote}”</p>
-                  </div>
+                    <div className="space-y-3">
+                      {r.link ? (
+                        <Link
+                          href={r.link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-lg font-medium inline-flex items-center gap-2 hover:text-muted-foreground transition-colors"
+                        >
+                          {r.name}
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 17L17 7M7 7h10v10" />
+                          </svg>
+                        </Link>
+                      ) : (
+                        <h3 className="text-lg font-medium">{r.name}</h3>
+                      )}
+                      {r.affiliation ? (
+                        <div className="text-sm text-muted-foreground">{r.affiliation}</div>
+                      ) : null}
+                      <p className="text-muted-foreground leading-relaxed">“{r.quote}”</p>
+                    </div>
                   </div>
                 </article>
               ))}
@@ -354,6 +368,46 @@ export default function Home() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h2l2 4-2 2a16 16 0 006 6l2-2 4 2v2a2 2 0 01-2 2h-1C9.82 19 5 14.18 5 8V7a2 2 0 012-2H7" />
                     </svg>
                   </Link>
+
+                  <div className="flex items-center gap-3 pt-2">
+                    <Link
+                      href="https://github.com/KesraouiMohamed1991"
+                      aria-label="GitHub"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group p-2 rounded-lg border border-border hover:border-muted-foreground/50 transition-all duration-300"
+                    >
+                      <svg
+                        className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-300"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M12 .5C5.649.5.5 5.649.5 12a11.5 11.5 0 007.864 10.94c.575.105.786-.247.786-.553 0-.273-.01-1.154-.015-2.095-3.2.696-3.877-1.356-3.877-1.356-.523-1.328-1.277-1.682-1.277-1.682-1.044-.714.079-.699.079-.699 1.155.081 1.763 1.186 1.763 1.186 1.027 1.761 2.695 1.253 3.35.958.104-.744.402-1.253.73-1.541-2.554-.291-5.239-1.277-5.239-5.684 0-1.255.45-2.281 1.186-3.087-.119-.29-.514-1.463.112-3.05 0 0 .967-.31 3.17 1.18a10.97 10.97 0 012.885-.388c.979.004 1.966.132 2.885.388 2.203-1.49 3.168-1.18 3.168-1.18.628 1.587.234 2.76.115 3.05.738.806 1.184 1.832 1.184 3.087 0 4.418-2.69 5.39-5.254 5.677.414.353.787 1.046.787 2.108 0 1.524-.014 2.75-.014 3.125 0 .309.208.664.794.551A11.504 11.504 0 0023.5 12C23.5 5.649 18.351.5 12 .5z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </Link>
+
+                    <Link
+                      href="https://www.linkedin.com/in/kesraouimohamed/"
+                      aria-label="LinkedIn"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group p-2 rounded-lg border border-border hover:border-muted-foreground/50 transition-all duration-300"
+                    >
+                      <svg
+                        className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-300"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden
+                      >
+                        <path d="M4.983 3.5a2.5 2.5 0 11-.001 5.001A2.5 2.5 0 014.983 3.5zM3 9h4v12H3zM9 9h3.8v1.64h.054c.53-1.003 1.827-2.06 3.763-2.06 4.023 0 4.763 2.651 4.763 6.097V21H17v-5.31c0-1.266-.024-2.894-1.764-2.894-1.768 0-2.039 1.382-2.039 2.807V21H9z" />
+                      </svg>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
@@ -386,7 +440,7 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-8">
             <div className="space-y-2">
               <div className="text-sm text-muted-foreground">© 2025 {profile.firstName} {profile.lastName}. Tous droits réservés.</div>
-              <div className="text-xs text-muted-foreground">Construit par {profile.firstName} {profile.lastName}.</div>
+              
               <div className="text-xs text-muted-foreground flex gap-4">
                 <Link href="/legal/mentions-legales" className="hover:text-foreground transition-colors">Mentions légales</Link>
                 <Link href="/legal/confidentialite" className="hover:text-foreground transition-colors">Confidentialité</Link>
