@@ -8,7 +8,6 @@ import { profile } from "@/lib/data"
 import { Analytics } from "@vercel/analytics/react"
 import { LenisProvider } from "@/components/lenis-provider"
 import { ScrollReveal } from "@/components/scroll-reveal"
-
 const geist = Geist({
   subsets: ["latin"],
   display: "swap",
