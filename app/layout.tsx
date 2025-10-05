@@ -8,6 +8,7 @@ import { profile } from "@/lib/data"
 import { Analytics } from "@vercel/analytics/react"
 import { LenisProvider } from "@/components/lenis-provider"
 import { ScrollReveal } from "@/components/scroll-reveal"
+
 const geist = Geist({
   subsets: ["latin"],
   display: "swap",
@@ -18,39 +19,39 @@ export const metadata: Metadata = {
   metadataBase: process.env.NEXT_PUBLIC_SITE_URL ? new URL(process.env.NEXT_PUBLIC_SITE_URL) : undefined,
   title: `${profile.firstName} ${profile.lastName} — ${profile.title}`,
   description:
-    "MVP rapides et apps scalables. Freelance / CDI — Ouvert aux opportunités. Développement d’applications web Next.js (SSR/ISR, App Router). Marseille, Aix‑en‑Provence, France.",
+    "Calimo Agency, agence digitale à Marseille & Aix : sites web Next.js, branding premium, SEO et campagnes de croissance sur-mesure.",
   applicationName: `${profile.firstName} ${profile.lastName}`,
   keywords: [
-    "développeur Next.js Marseille",
-    "développeur Node Aix‑en‑Provence",
-    "freelance React Marseille",
-    "création application web",
-    "intégration API",
-    "site performant SEO",
+    "agence digitale Marseille",
+    "création site web Next.js",
+    "branding premium",
+    "seo technique marseille",
+    "growth marketing b2b",
+    "agence web aix en provence",
   ],
-  generator: " Next.js",
+  generator: "Next.js",
   alternates: {
     canonical: process.env.NEXT_PUBLIC_SITE_URL || undefined,
     languages: { fr: process.env.NEXT_PUBLIC_SITE_URL || undefined },
   },
   openGraph: {
-    title: `${profile.firstName} ${profile.lastName} — Développeur Fullstack JavaScript`,
+    title: `${profile.firstName} ${profile.lastName} — ${profile.title}`,
     description:
-      "MVP rapides et apps scalables pour startups, agences et scaleups (FR/EU). Next.js, Node.js, React.",
+      "Agence digitale & marketing basée à Marseille : sites web Next.js, branding, SEO technique et activation growth pour marques ambitieuses.",
     type: "website",
     images: [
-      { url: "/og.png", width: 1200, height: 630, alt: `${profile.firstName} ${profile.lastName}` },
+      { url: "/calimo.png", width: 1200, height: 630, alt: `${profile.firstName} ${profile.lastName}` },
     ],
     locale: "fr_FR",
   },
   twitter: {
     card: "summary_large_image",
-    title: `${profile.firstName} ${profile.lastName} — Développeur Fullstack JavaScript`,
-    description: "MVP rapides et apps scalables. Next.js & Node.js. Marseille/Aix.",
+    title: `${profile.firstName} ${profile.lastName} — ${profile.title}`,
+    description: "Calimo Agency — Sites web Next.js, branding, SEO et marketing de croissance.",
     images: ["/og.png"],
   },
   icons: {
-    icon: "/logo.svg",
+    icon: "/calimo.png",
   },
 }
 
@@ -59,17 +60,36 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const schema = {
+  const organizationSchema = {
     "@context": "https://schema.org",
-    "@type": "Person",
+    "@type": "Organization",
     name: `${profile.firstName} ${profile.lastName}`,
-    jobTitle: profile.title,
-    address: { "@type": "PostalAddress", addressCountry: profile.location },
+    description: profile.title,
+    url: process.env.NEXT_PUBLIC_SITE_URL || undefined,
     email: `mailto:${profile.email}`,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: profile.location,
+      addressCountry: "FR",
+    },
+    sameAs: [
+      "https://www.linkedin.com/company/calimo-agency",
+      "https://www.instagram.com/calimo.agency",
+      "https://dribbble.com/calimo",
+    ],
+  }
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    url: process.env.NEXT_PUBLIC_SITE_URL || undefined,
+    name: `${profile.firstName} ${profile.lastName}`,
+    inLanguage: "fr-FR",
+    publisher: { "@type": "Organization", name: `${profile.firstName} ${profile.lastName}` },
   }
 
   return (
-    <html lang="fr" className={`${geist.variable}`} suppressHydrationWarning>
+    <html lang="fr" className={geist.variable} suppressHydrationWarning>
       <body className="font-sans antialiased">
         <a
           href="#content"
@@ -89,24 +109,13 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
-<script
-  type="application/ld+json"
-  // eslint-disable-next-line react/no-danger
-  dangerouslySetInnerHTML={{
-    __html: JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      url: process.env.NEXT_PUBLIC_SITE_URL || '',
-      name: `${profile.firstName} ${profile.lastName}`,
-      inLanguage: 'fr-FR',
-      publisher: { '@type': 'Person', name: `${profile.firstName} ${profile.lastName}` },
-    }),
-  }}
-/>
-
-
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
       </body>
     </html>
   )

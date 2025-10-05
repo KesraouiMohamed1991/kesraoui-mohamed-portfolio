@@ -69,7 +69,7 @@ export default function ScrollFooter() {
               startOffset={`${i * 40}%`}
               href="#curve-scroll"
             >
-              Développeur Fullstack — Next.js • Node.js • React
+              Calimo Agency — Branding • Web • Growth
             </textPath>
           ))}
         </text>
