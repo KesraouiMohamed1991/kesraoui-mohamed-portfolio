@@ -84,9 +84,9 @@ export default function Home() {
                 data-reveal-from="up"
                 data-reveal-distance="12"
               >
-                <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" aria-hidden />
-                <span>Calimo Agency</span>
-                <span className="hidden sm:inline text-foreground/60">{profile.location}</span>
+                <span className="text-foreground/80">Calimo Agency</span>
+                <span className="hidden sm:inline text-muted-foreground/70">•</span>
+                <span className="text-foreground/60">{profile.location}</span>
               </div>
 
               <h1
@@ -116,11 +116,12 @@ export default function Home() {
                 data-reveal-distance="24"
                 data-reveal-delay="0.16"
               >
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                <span>{profile.location}</span>
+                <span className="hidden sm:inline text-muted-foreground/70">•</span>
+                <span className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" aria-hidden />
                   {profile.available ? "Disponible" : "Complet"}
-                </div>
-                <div>{profile.location}</div>
+                </span>
               </div>
               <div
                 className="flex flex-col sm:flex-row gap-3 sm:gap-4"
@@ -197,7 +198,7 @@ export default function Home() {
           <div className="space-y-12 sm:space-y-16">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <h2 className="text-3xl sm:text-4xl font-light">Services & expertises</h2>
-              <div className="text-sm text-muted-foreground font-mono">Domaines d'intervention</div>
+              <p className="text-sm text-muted-foreground font-mono">Domaines d'intervention</p>
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2">
@@ -210,9 +211,8 @@ export default function Home() {
                   data-reveal-delay={`${index * 0.06}`}
                   className="group relative overflow-hidden rounded-2xl border border-border/60 bg-background/70 p-6 sm:p-8 transition-all duration-500 hover:border-muted-foreground/60 hover:-translate-y-1"
                 >
-                  <div className="text-xs font-mono uppercase tracking-[0.3em] text-muted-foreground">Service {String(index + 1).padStart(2, '0')}</div>
                   <h3 className="mt-4 text-lg font-medium text-foreground group-hover:text-muted-foreground transition-colors">{title}</h3>
-                  <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{description}</p>
+                  <p className="mt-4 text-sm text-muted-foreground  leading-relaxed">{description}</p>
                   <ul className="mt-4 space-y-2 text-sm text-muted-foreground/90">
                     {benefits.map((benefit, benefitIndex) => (
                       <li key={`${title}-benefit-${benefitIndex}`} className="flex items-start gap-2">
@@ -252,7 +252,7 @@ export default function Home() {
           <div className="space-y-12 sm:space-y-16">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <h2 className="text-3xl sm:text-4xl font-light">Réalisations</h2>
-              <div className="text-sm text-muted-foreground font-mono">Sélection</div>
+              <p className="text-sm text-muted-foreground font-mono">Sélection</p>
             </div>
 
             <div className="space-y-8 sm:space-y-12">
@@ -301,7 +301,7 @@ export default function Home() {
         </section>
 
 
-
+{/* posts */}
         <section
           id="blog"
           ref={(el: HTMLElement | null) => {
@@ -311,6 +311,7 @@ export default function Home() {
         >
           <div className="space-y-12 sm:space-y-16">
             <h2 className="text-3xl sm:text-4xl font-light">Blog</h2>
+            <p className="text-muted-foreground">Nos articles, études et retours d’expérience.</p>
 
             <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
               {posts.map((post) => (
@@ -318,7 +319,7 @@ export default function Home() {
                   key={post.slug}
                   href={`/blog/${post.slug}`}
                   data-reveal
-                  className="group p-6 sm:p-8 border border-border rounded-lg hover:border-muted-foreground/50 transition-all duration-500 hover:shadow-lg cursor-pointer"
+                  className="group p-6 sm:p-8 border border-border  rounded-lg hover:border-muted-foreground/50 transition-all duration-500 hover:shadow-lg cursor-pointer"
                 >
                   <div className="space-y-4">
                     <div className="flex items-center justify-between text-xs text-muted-foreground font-mono">
@@ -330,7 +331,7 @@ export default function Home() {
                       {post.title}
                     </h3>
 
-                    <p className="text-muted-foreground leading-relaxed">{post.excerpt}</p>
+                    <p className="text-muted-foreground leading-relaxed ">{post.excerpt}</p>
 
                   </div>
                 </Link>
@@ -382,7 +383,7 @@ export default function Home() {
           </div>
         </section>
 
-
+{/* faq */}
         <section
           id="faq"
           ref={(el: HTMLElement | null) => {
@@ -393,7 +394,7 @@ export default function Home() {
           <div className="space-y-12 sm:space-y-16">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <h2 className="text-3xl sm:text-4xl font-light">Questions fréquentes</h2>
-              <div className="text-sm text-muted-foreground font-mono">FAQ</div>
+              <p className="text-sm text-muted-foreground font-mono">FAQ</p>
             </div>
 
             <div className="grid gap-4 sm:gap-6">

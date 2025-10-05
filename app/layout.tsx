@@ -19,15 +19,15 @@ export const metadata: Metadata = {
   metadataBase: process.env.NEXT_PUBLIC_SITE_URL ? new URL(process.env.NEXT_PUBLIC_SITE_URL) : undefined,
   title: `${profile.firstName} ${profile.lastName} — ${profile.title}`,
   description:
-    "Calimo Agency accompagne les marques ambitieuses : sites web Next.js, branding, marketing de croissance et activation digitale depuis Marseille et Aix-en-Provence.",
+    "Calimo Agency, agence digitale à Marseille & Aix : sites web Next.js, branding premium, SEO et campagnes de croissance sur-mesure.",
   applicationName: `${profile.firstName} ${profile.lastName}`,
   keywords: [
-    "agence web Marseille",
-    "création site vitrine",
-    "Next.js freelance Marseille",
-    "branding & identité",
-    "growth marketing",
-    "agence digitale Aix-en-Provence",
+    "agence digitale Marseille",
+    "création site web Next.js",
+    "branding premium",
+    "seo technique marseille",
+    "growth marketing b2b",
+    "agence web aix en provence",
   ],
   generator: "Next.js",
   alternates: {
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${profile.firstName} ${profile.lastName} — ${profile.title}`,
     description:
-      "Agence digitale & marketing basée à Marseille. Création de sites performants, applications web, branding et campagnes de croissance.",
+      "Agence digitale & marketing basée à Marseille : sites web Next.js, branding, SEO technique et activation growth pour marques ambitieuses.",
     type: "website",
     images: [
       { url: "/calimo.png", width: 1200, height: 630, alt: `${profile.firstName} ${profile.lastName}` },
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: `${profile.firstName} ${profile.lastName} — ${profile.title}`,
-    description: "Calimo Agency — Sites web Next.js, branding, marketing de croissance.",
+    description: "Calimo Agency — Sites web Next.js, branding, SEO et marketing de croissance.",
     images: ["/og.png"],
   },
   icons: {

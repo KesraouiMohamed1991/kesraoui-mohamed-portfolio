@@ -570,7 +570,7 @@ export const recommendations: Recommendation[] = [
       "Calimo a su traduire notre ADN en expérience digitale cohérente. Leur accompagnement design + tech a boosté nos ventes en quelques semaines.",
   },
   {
-    name: "Julien Vincent",
+    name: "Yacine Kaoudjt",
     affiliation: "Directeur Marketing — ComptaSolution",
     quote:
       "Une équipe qui comprend les enjeux business et livre vite. Les itérations sont basées sur les data, pas sur l'intuition.",
