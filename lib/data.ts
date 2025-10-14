@@ -56,6 +56,20 @@ export type Service = {
   ctaHref?: string
 }
 
+export type PricingPlan = {
+  name: string
+  tagline: string
+  priceMonthly?: number
+  priceYearly?: number
+  highlight?: boolean
+  badge?: string
+  customLabel?: string
+  ctaLabel: string
+  ctaHref: string
+  ctaNote?: string
+  features: string[]
+}
+
 export const profile = {
   firstName: "Calimo",
   lastName: "Agency",
@@ -681,3 +695,56 @@ export const faqs: FAQ[] = [
   },
 ]
 
+export const pricingPlans: PricingPlan[] = [
+  {
+    name: "Site vitrine simple",
+    tagline: "Mettre en ligne une présence claire et impactante en quelques semaines.",
+    priceMonthly: 999,
+    priceYearly: 999 * 12 * 0.85,
+    ctaLabel: "Réserver un appel",
+    ctaHref: process.env.NEXT_PUBLIC_CALENDLY_URL ?? "https://cal.com/calimo-agency/30min",
+    ctaNote: "Intéressé(e) par l'offre Site vitrine simple",
+    features: [
+      "Atelier cadrage express (positionnement, objectifs, contenus)",
+      "Design responsive 3-5 pages avec animations légères",
+      "Intégration Next.js + CMS simplifié pour modifier textes et médias",
+      "Optimisation SEO technique de base et performance Core Web Vitals",
+      "Formation de prise en main (1 h) + support Slack / email (J+1)",
+    ],
+  },
+  {
+    name: "Site vitrine évolutif",
+    tagline: "Structure multi-pages avec back-office pour piloter vos contenus et leads.",
+    priceMonthly: 1999,
+    priceYearly: 1999 * 12 * 0.82,
+    highlight: true,
+    badge: "Populaire",
+    ctaLabel: "Planifier un workshop",
+    ctaHref: process.env.NEXT_PUBLIC_CALENDLY_URL ?? "https://cal.com/calimo-agency/30min",
+    ctaNote: "Intéressé(e) par l'offre Site vitrine évolutif",
+    features: [
+      "Architecture 10-15 pages et sections blog/ressources modulaires",
+      "Back-office personnalisé (CMS complet, rôles, workflows)",
+      "Automations CRM, formulaires avancés et tracking évènementiel",
+      "Design system étendu avec composants réutilisables",
+      "Support prioritaire et évolutions continues (SLA 48 h)",
+    ],
+  },
+  {
+    name: "Application web",
+    tagline: "Produit digital sur mesure : discovery, design, développement et lancement.",
+    customLabel: "Sur devis",
+    priceMonthly: undefined,
+    priceYearly: undefined,
+    ctaLabel: "Construire l'application",
+    ctaHref: process.env.NEXT_PUBLIC_CALENDLY_URL ?? "https://cal.com/calimo-agency/30min",
+    ctaNote: "Intéressé(e) par l'offre Application web",
+    features: [
+      "Product discovery, UX research et wireframes interactifs",
+      "Front-end Next.js / React et back-end Node.js, API sécurisées",
+      "Architecture data (PostgreSQL, Supabase, Firebase, etc.)",
+      "Intégrations métier (ERP, CRM, IA, paiements) et automatisations",
+      "Monitoring, analytics produit et rituels d'amélioration continue",
+    ],
+  },
+]
