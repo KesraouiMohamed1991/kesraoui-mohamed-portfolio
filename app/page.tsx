@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import type { JSX } from "react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { jobs, posts, profile, socials, skills, projects, recommendations, services, faqs, pricingPlans } from "@/lib/data"
 import { useLenis } from "@/components/lenis-provider"
