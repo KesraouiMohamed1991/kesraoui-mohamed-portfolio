@@ -1,16 +1,147 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useRef, useState } from "react"
-import { jobs, posts, profile, socials, skills, projects, recommendations, services, faqs } from "@/lib/data"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { jobs, posts, profile, socials, skills, projects, recommendations, services, faqs, pricingPlans } from "@/lib/data"
 import { useLenis } from "@/components/lenis-provider"
 import ScrollFooter from "@/components/scroll-footer"
+
+const socialIconMap: Record<string, JSX.Element> = {
+  LinkedIn: (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
+      <path d="M4.983 3.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM0 8.25h5.004V24H0V8.25zM8.66 8.25H13.5v2.15h.07c.68-1.3 2.32-2.67 4.78-2.67 5.12 0 6.07 3.37 6.07 7.74V24h-5V16.2c0-1.86-.03-4.25-2.59-4.25-2.6 0-3 2.03-3 4.12V24h-5V8.25z" />
+    </svg>
+  ),
+  Instagram: (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
+      <path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm0 2a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H7zm11 1.75a1 1 0 110 2 1 1 0 010-2zM12 7.5a4.5 4.5 0 110 9 4.5 4.5 0 010-9zm0 2a2.5 2.5 0 100 5 2.5 2.5 0 000-5z" />
+    </svg>
+  ),
+  Dribbble: (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
+      <path d="M12 2a10 10 0 1010 10A10.011 10.011 0 0012 2zm6.93 9.25a15.62 15.62 0 00-5.4-.18 31.74 31.74 0 00-1.23-2.77 15.43 15.43 0 004.16-2.64 8 8 0 012.47 5.59zm-3.9-7.1a13.5 13.5 0 01-3.74 2.36 31.71 31.71 0 00-3.06-4.67 8 8 0 016.8 2.3zM8.3 4.91a30 30 0 013 4.57 32.23 32.23 0 01-7.2.58 8 8 0 014.2-5.15zM4.05 12a6 6 0 01.06-.86 34.64 34.64 0 008.19-.7c.35.7.67 1.42 1 2.16a17.4 17.4 0 00-5.94 4.74A7.94 7.94 0 014.05 12zm7.95 8a7.9 7.9 0 01-4.61-1.5 15.4 15.4 0 015.29-4.17 16.1 16.1 0 011.46 6.11A7.4 7.4 0 0112 20zm3.9-1.1a18.18 18.18 0 00-1.28-5.36 14 14 0 014.7.34A8 8 0 0115.9 18.9z" />
+    </svg>
+  ),
+}
+
+const buildSchedulingUrl = (baseUrl?: string, note?: string, fallback?: string) => {
+  const target = baseUrl ?? fallback
+  if (!target) return "#"
+  if (!note) return target
+  try {
+    const url = new URL(target)
+    url.searchParams.set("notes", note)
+    return url.toString()
+  } catch (error) {
+    const separator = target.includes("?") ? "&" : "?"
+    return `${target}${separator}notes=${encodeURIComponent(note)}`
+  }
+}
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState("")
   const sectionsRef = useRef<(HTMLElement | null)[]>([])
   const lenis = useLenis()
   const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL
+  const priceFormatter = useMemo(
+    () =>
+      new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency: "EUR",
+        maximumFractionDigits: 0,
+      }),
+    [],
+  )
+  const contactHighlights = [
+    {
+      label: "Temps de réponse",
+      value: "< 24 h ouvrées",
+      gradient: "bg-[radial-gradient(60%_60%_at_85%_15%,rgba(251,191,36,0.28),rgba(0,0,0,0))]",
+    },
+    {
+      label: "Formats",
+      value: "Design • Web • Growth",
+      gradient: "bg-[radial-gradient(60%_60%_at_15%_15%,rgba(251,191,36,0.26),rgba(0,0,0,0))]",
+    },
+    {
+      label: "Langues",
+      value: "Français / Anglais",
+      gradient: "bg-[radial-gradient(60%_60%_at_50%_0%,rgba(251,191,36,0.24),rgba(0,0,0,0))]",
+    },
+  ]
+  const serviceHighlights = [
+    {
+      label: "Vendre en ligne",
+      badgeBg: "bg-gradient-to-r from-amber-400/20 via-amber-400/10 to-transparent",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.5" stroke="currentColor" className="h-4 w-4">
+          <circle cx="12" cy="12" r="8.5" />
+          <path d="M3.5 12h17" strokeLinecap="round" />
+          <path d="M12 3.5c2.4 3 2.4 14 0 17" strokeLinecap="round" />
+          <path d="M12 3.5c-2.4 3-2.4 14 0 17" strokeLinecap="round" />
+        </svg>
+      ),
+    },
+    {
+      label: "Outils sur-mesure",
+      badgeBg: "bg-gradient-to-r from-amber-500/18 via-amber-500/10 to-transparent",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.5" stroke="currentColor" className="h-4 w-4">
+          <rect x="3.5" y="3.5" width="7" height="7" rx="1.5" />
+          <rect x="13.5" y="3.5" width="7" height="7" rx="1.5" />
+          <rect x="3.5" y="13.5" width="7" height="7" rx="1.5" />
+          <path d="M13.5 17h7" strokeLinecap="round" />
+        </svg>
+      ),
+    },
+    {
+      label: "Marque mémorable",
+      badgeBg: "bg-gradient-to-r from-amber-500/16 via-amber-400/10 to-transparent",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.5" stroke="currentColor" className="h-4 w-4">
+          <path
+            d="M12 4l2.1 4.6 5.1.5-3.8 3.3 1 4.9-4.4-2.6-4.4 2.6 1-4.9-3.8-3.3 5.1-.5L12 4z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    {
+      label: "Être trouvé",
+      badgeBg: "bg-gradient-to-r from-amber-500/18 via-amber-400/12 to-transparent",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.5" stroke="currentColor" className="h-4 w-4">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M16.5 16.5L20.5 20.5" strokeLinecap="round" />
+        </svg>
+      ),
+    },
+    {
+      label: "Booster l’acquisition",
+      badgeBg: "bg-gradient-to-r from-amber-500/18 via-amber-400/12 to-transparent",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.5" stroke="currentColor" className="h-4 w-4">
+          <path d="M3.5 16.5l6-6 4.5 4.5 6.5-10" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M21 6.5v5h-5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ),
+    },
+    {
+      label: "Accompagnement continu",
+      badgeBg: "bg-gradient-to-r from-amber-500/16 via-amber-400/10 to-transparent",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.5" stroke="currentColor" className="h-4 w-4">
+          <path
+            d="M12 3.5l7 3v5.5c0 5-3.7 9.5-7 9.5s-7-4.5-7-9.5V6.5l7-3z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path d="M9.5 12.5l2.5 2.5 4-4" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ),
+    },
+  ]
 
   // Data order is defined in lib/data.ts
 
@@ -44,7 +175,7 @@ export default function Home() {
     <div className="min-h-screen bg-background text-foreground relative">
       <nav className="fixed left-8 top-1/2 -translate-y-1/2 z-10 hidden lg:block">
         <div className="flex flex-col gap-4">
-          {["intro", "services", "projects", "blog", "recommendations", "faq", "connect"].map((section) => (
+          {["intro", "services", "pricing", "projects", "blog", "recommendations", "faq", "connect"].map((section) => (
             <a
               key={section}
               href={`#${section}`}
@@ -68,7 +199,7 @@ export default function Home() {
         </div>
       </nav>
 
-      <main className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-16">
+      <main className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-16 xl:px-20">
         <header
           id="intro"
           ref={(el: HTMLElement | null) => {
@@ -96,7 +227,8 @@ export default function Home() {
                 data-reveal-distance="36"
                 data-reveal-duration="0.7"
               >
-                Sites web & expériences digitales pour marques ambitieuses.
+                Sites web & expériences digitales pour marques{" "}
+                <span className="text-amber-400">ambitieuses</span>.
               </h1>
 
               <p
@@ -149,7 +281,7 @@ export default function Home() {
 
             <aside className="hero-intro-secondary space-y-6 sm:space-y-8" data-reveal-stagger="0.12">
               <div
-                className="rounded-3xl border border-border/80 bg-background/85 p-6 shadow-lg shadow-primary/5"
+                className="relative overflow-hidden rounded-3xl border border-border/80 bg-background/85 bg-[radial-gradient(60%_60%_at_85%_15%,rgba(251,191,36,0.24),rgba(0,0,0,0))] bg-no-repeat p-6 shadow-lg shadow-primary/5"
                 data-reveal
                 data-reveal-from="right"
                 data-reveal-distance="28"
@@ -198,44 +330,179 @@ export default function Home() {
           <div className="space-y-12 sm:space-y-16">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <h2 className="text-3xl sm:text-4xl font-light">Services & expertises</h2>
-              <p className="text-sm text-muted-foreground font-mono">Domaines d'intervention</p>
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2">
-              {services.map(({ title, description, benefits, ctaLabel, ctaHref }, index) => (
-                <div
-                  key={title}
-                  data-reveal
-                  data-reveal-from="up"
-                  data-reveal-distance="18"
-                  data-reveal-delay={`${index * 0.06}`}
-                  className="group relative overflow-hidden rounded-2xl border border-border/60 bg-background/70 p-6 sm:p-8 transition-all duration-500 hover:border-muted-foreground/60 hover:-translate-y-1"
-                >
-                  <h3 className="mt-4 text-lg font-medium text-foreground group-hover:text-muted-foreground transition-colors">{title}</h3>
-                  <p className="mt-4 text-sm text-muted-foreground  leading-relaxed">{description}</p>
-                  <ul className="mt-4 space-y-2 text-sm text-muted-foreground/90">
-                    {benefits.map((benefit, benefitIndex) => (
-                      <li key={`${title}-benefit-${benefitIndex}`} className="flex items-start gap-2">
-                        <span className="mt-1 h-1 w-4 rounded-full bg-muted-foreground/50" aria-hidden />
-                        <span>{benefit}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  {ctaLabel && ctaHref ? (
-                    <Link
-                      href={ctaHref}
-                      className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-foreground hover:text-muted-foreground transition-colors"
-                      target={ctaHref.startsWith('http') ? '_blank' : undefined}
-                      rel={ctaHref.startsWith('http') ? 'noreferrer' : undefined}
+              {services.map((service, index) => {
+                const { title, description, benefits, ctaLabel, ctaHref } = service
+                const highlight = serviceHighlights[index % serviceHighlights.length]
+
+                return (
+                  <div
+                    key={title}
+                    data-reveal
+                    data-reveal-from="up"
+                    data-reveal-distance="18"
+                    data-reveal-delay={`${index * 0.06}`}
+                    className={`group relative overflow-hidden rounded-2xl border border-border/60 bg-background/70 ${
+                      index % 2 === 0
+                        ? "bg-[radial-gradient(60%_60%_at_80%_100%,rgba(251,191,36,0.30),rgba(0,0,0,0))]"
+                        : "bg-[radial-gradient(60%_60%_at_20%_100%,rgba(251,191,36,0.30),rgba(0,0,0,0))]"
+                    } bg-no-repeat p-6 sm:p-8 transition-all duration-500 hover:border-muted-foreground/60 hover:-translate-y-1`}
+                  >
+                    {highlight ? (
+                      <div
+                        className={`inline-flex items-center gap-3 rounded-full px-4 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-foreground ${highlight.badgeBg}`}
+                      >
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-500/15 text-amber-500">
+                          {highlight.icon}
+                        </span>
+                        <span>{highlight.label}</span>
+                      </div>
+                    ) : null}
+
+                    <h3 className="mt-6 text-lg font-medium text-foreground transition-colors group-hover:text-muted-foreground">{title}</h3>
+                    <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{description}</p>
+                    <ul className="mt-4 space-y-2 text-sm text-muted-foreground/90">
+                      {benefits.map((benefit, benefitIndex) => (
+                        <li
+                          key={`${title}-benefit-${benefitIndex}`}
+                          className="flex items-start gap-3 leading-relaxed"
+                        >
+                          <span
+                            className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-muted-foreground/70 sm:mt-2 sm:h-px sm:w-4 sm:rounded-full sm:bg-muted-foreground/60"
+                            aria-hidden="true"
+                          />
+                          <span className="flex-1">{benefit}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    {ctaLabel && ctaHref ? (
+                      <Link
+                        href={ctaHref}
+                        className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-foreground transition-colors hover:text-muted-foreground"
+                        target={ctaHref.startsWith('http') ? '_blank' : undefined}
+                        rel={ctaHref.startsWith('http') ? 'noreferrer' : undefined}
+                      >
+                        {ctaLabel}
+                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 17L17 7M7 7h10v10" />
+                        </svg>
+                      </Link>
+                    ) : null}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="pricing"
+          ref={(el: HTMLElement | null) => {
+            sectionsRef.current[2] = el
+          }}
+          className="py-20 sm:py-32"
+        >
+          <div className="space-y-12 sm:space-y-16">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <div className="space-y-3">
+                <h2 className="text-3xl sm:text-4xl font-light">Formules d’accompagnement</h2>
+                <p className="text-sm text-muted-foreground max-w-xl">
+                  Choisissez le rythme qui correspond à vos objectifs. Chaque offre inclut une équipe senior, un pilotage
+                  rigoureux et des livrables prêts à activer.
+                </p>
+              </div>
+
+              <div className="text-xs text-muted-foreground/80">
+                Facturation mensuelle, engagement flexible par lots de 3 mois.
+              </div>
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-3">
+              {pricingPlans.map((plan, index) => {
+                const iconMap = ["🚀", "⚡️", "👑"] as const
+                const currentIcon = iconMap[index] ?? "✨"
+                const priceValue = plan.priceMonthly
+                const formattedPrice = plan.customLabel
+                  ? plan.customLabel
+                  : priceValue
+                    ? priceFormatter.format(priceValue)
+                    : "Sur devis"
+                const priceSuffix = plan.customLabel ? "" : "/ mois"
+                const bookingUrl = buildSchedulingUrl(plan.ctaHref, plan.ctaNote, calendlyUrl)
+
+                return (
+                  <div
+                    key={plan.name}
+                    className={`group relative overflow-hidden rounded-3xl border p-8 sm:p-10 transition-all duration-500 hover:-translate-y-1 hover:border-muted-foreground/60 ${
+                      plan.highlight
+                        ? "border-amber-400/60 bg-[radial-gradient(80%_90%_at_50%_0%,rgba(251,191,36,0.35),rgba(0,0,0,0))] shadow-[0_24px_70px_rgba(251,191,36,0.25)] lg:-translate-y-1"
+                        : "border-border/70 bg-background/75 bg-[radial-gradient(80%_85%_at_50%_0%,rgba(251,191,36,0.18),rgba(0,0,0,0))]"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/15 text-lg">
+                          <span aria-hidden="true">{currentIcon}</span>
+                        </span>
+                        <span>{plan.name}</span>
+                      </div>
+                      {plan.badge ? (
+                        <span className="rounded-full bg-foreground/10 px-3 py-1 text-xs font-semibold text-foreground/90">
+                          {plan.badge}
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <div className="mt-6 space-y-3">
+                      <div className="flex items-end gap-2">
+                        <span className="text-3xl font-light text-foreground">{formattedPrice}</span>
+                        <span className="text-sm text-muted-foreground/80">{priceSuffix}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{plan.tagline}</p>
+                    </div>
+
+                    <a
+                      href={bookingUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`mt-8 inline-flex w-full items-center justify-center rounded-full border px-5 py-3 text-sm font-semibold transition-all ${
+                        plan.highlight
+                          ? "border-transparent bg-foreground text-background shadow-lg shadow-amber-500/20 hover:bg-foreground/90"
+                          : "border-border text-foreground hover:border-muted-foreground/60 hover:bg-foreground/5"
+                      }`}
                     >
-                      {ctaLabel}
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 17L17 7M7 7h10v10" />
-                      </svg>
-                    </Link>
-                  ) : null}
-                </div>
-              ))}
+                      {plan.ctaLabel}
+                    </a>
+
+                    <div className="mt-8 space-y-3">
+                      <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+                        Inclus dans l’offre
+                      </p>
+                      <ul className="space-y-2">
+                        {plan.features.map((feature) => (
+                          <li key={`${plan.name}-${feature}`} className="flex items-start gap-3 text-sm text-muted-foreground leading-relaxed">
+                            <svg
+                              className="mt-1 h-4 w-4 flex-shrink-0 text-amber-400"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              aria-hidden="true"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M16.704 5.29a1 1 0 010 1.414l-7.071 7.071a1 1 0 01-1.414 0L3.296 8.854a1 1 0 111.414-1.414l3.218 3.218 6.364-6.364a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </section>
@@ -245,7 +512,7 @@ export default function Home() {
         <section
           id="projects"
           ref={(el: HTMLElement | null) => {
-            sectionsRef.current[2] = el
+            sectionsRef.current[3] = el
           }}
           className="min-h-screen py-20 sm:py-32"
         >
@@ -305,7 +572,7 @@ export default function Home() {
         <section
           id="blog"
           ref={(el: HTMLElement | null) => {
-            sectionsRef.current[3] = el
+            sectionsRef.current[4] = el
           }}
           className="min-h-screen py-20 sm:py-32"
         >
@@ -314,12 +581,16 @@ export default function Home() {
             <p className="text-muted-foreground">Nos articles, études et retours d’expérience.</p>
 
             <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
-              {posts.map((post) => (
+              {posts.map((post, index) => (
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}
                   data-reveal
-                  className="group p-6 sm:p-8 border border-border  rounded-lg hover:border-muted-foreground/50 transition-all duration-500 hover:shadow-lg cursor-pointer"
+                  className={`group relative overflow-hidden p-6 sm:p-8 border border-border rounded-lg bg-background/70 ${
+                    index % 2 === 0
+                      ? "bg-[radial-gradient(60%_60%_at_75%_100%,rgba(251,191,36,0.30),rgba(0,0,0,0))]"
+                      : "bg-[radial-gradient(60%_60%_at_25%_100%,rgba(251,191,36,0.30),rgba(0,0,0,0))]"
+                  } bg-no-repeat transition-all duration-500 hover:border-muted-foreground/50 cursor-pointer`}
                 >
                   <div className="space-y-4">
                     <div className="flex items-center justify-between text-xs text-muted-foreground font-mono">
@@ -344,7 +615,7 @@ export default function Home() {
         <section
           id="recommendations"
           ref={(el: HTMLElement | null) => {
-            sectionsRef.current[4] = el
+            sectionsRef.current[5] = el
           }}
           className="min-h-screen py-20 sm:py-32"
         >
@@ -353,7 +624,14 @@ export default function Home() {
 
             <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
               {recommendations.map((r, i) => (
-                <article key={i} className="group p-6 sm:p-8 border border-border rounded-lg hover:border-muted-foreground/50 transition-all duration-500 hover:shadow-lg">
+                <article
+                  key={i}
+                  className={`group relative overflow-hidden p-6 sm:p-8 border border-border rounded-lg bg-background/75 ${
+                    i % 2 === 0
+                      ? "bg-[radial-gradient(60%_60%_at_80%_0%,rgba(251,191,36,0.28),rgba(0,0,0,0))]"
+                      : "bg-[radial-gradient(60%_60%_at_20%_0%,rgba(251,191,36,0.28),rgba(0,0,0,0))]"
+                  } bg-no-repeat transition-all duration-500 hover:border-muted-foreground/50 hover:shadow-lg`}
+                >
                   <div data-reveal>
                     <div className="space-y-3">
                       {r.link ? (
@@ -387,7 +665,7 @@ export default function Home() {
         <section
           id="faq"
           ref={(el: HTMLElement | null) => {
-            sectionsRef.current[5] = el
+            sectionsRef.current[6] = el
           }}
           className="py-20 sm:py-32"
         >
@@ -405,7 +683,11 @@ export default function Home() {
                   data-reveal-from="up"
                   data-reveal-distance="18"
                   data-reveal-delay={`${index * 0.04}`}
-                  className="group rounded-2xl border border-border/60 bg-background/70 p-6 sm:p-7 transition-all hover:border-muted-foreground/60"
+                  className={`group relative overflow-hidden rounded-2xl border border-border/60 bg-background/75 ${
+                    index % 2 === 0
+                      ? "bg-[radial-gradient(65%_65%_at_85%_15%,rgba(251,191,36,0.26),rgba(0,0,0,0))]"
+                      : "bg-[radial-gradient(65%_65%_at_15%_15%,rgba(251,191,36,0.26),rgba(0,0,0,0))]"
+                  } bg-no-repeat p-6 sm:p-7 transition-all hover:border-muted-foreground/60`}
                 >
                   <summary className="flex items-center justify-between gap-4 cursor-pointer text-lg font-medium text-foreground">
                     <span>{faq.question}</span>
@@ -424,7 +706,7 @@ export default function Home() {
         <section
           id="connect"
           ref={(el: HTMLElement | null) => {
-            sectionsRef.current[6] = el
+            sectionsRef.current[7] = el
           }}
           className="py-20 sm:py-32"
         >
@@ -475,18 +757,15 @@ export default function Home() {
               </ul>
 
               <div className="grid gap-3 sm:grid-cols-3" data-reveal data-reveal-from="up" data-reveal-distance="24" data-reveal-delay="0.24">
-                <div className="rounded-2xl border border-border/70 bg-background/70 p-4 text-sm text-muted-foreground/90">
-                  <div className="text-xs uppercase tracking-[0.3em]">Temps de réponse</div>
-                  <div className="mt-2 text-foreground font-medium">&lt; 24 h ouvrées</div>
-                </div>
-                <div className="rounded-2xl border border-border/70 bg-background/70 p-4 text-sm text-muted-foreground/90">
-                  <div className="text-xs uppercase tracking-[0.3em]">Formats</div>
-                  <div className="mt-2 text-foreground font-medium">Design • Web • Growth</div>
-                </div>
-                <div className="rounded-2xl border border-border/70 bg-background/70 p-4 text-sm text-muted-foreground/90">
-                  <div className="text-xs uppercase tracking-[0.3em]">Langues</div>
-                  <div className="mt-2 text-foreground font-medium">Français / Anglais</div>
-                </div>
+                {contactHighlights.map(({ label, value, gradient }) => (
+                  <div
+                    key={label}
+                    className={`relative overflow-hidden rounded-2xl border border-border/70 bg-background/75 ${gradient} bg-no-repeat p-4 text-sm text-muted-foreground/90`}
+                  >
+                    <div className="text-xs uppercase tracking-[0.3em]">{label}</div>
+                    <div className="mt-2 text-foreground font-medium">{value}</div>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -526,7 +805,7 @@ export default function Home() {
               </div>
 
               <div
-                className="rounded-3xl border border-border/80 bg-background/85 p-6 shadow-lg shadow-primary/5 space-y-4"
+                className="relative overflow-hidden rounded-3xl border border-border/80 bg-background/85 bg-[radial-gradient(60%_60%_at_15%_15%,rgba(251,191,36,0.22),rgba(0,0,0,0))] bg-no-repeat p-6 shadow-lg shadow-primary/5 space-y-4"
                 data-reveal
                 data-reveal-from="right"
                 data-reveal-distance="24"
@@ -570,10 +849,32 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span>{profile.email}</span>
-              <span>•</span>
-              <span>{ process.env.NEXT_PUBLIC_phoneNumber }</span>
+            <div className="flex flex-col items-start gap-3 text-sm text-muted-foreground">
+              <div className="flex items-center gap-4">
+                <span>{profile.email}</span>
+                <span>•</span>
+                <span>{ process.env.NEXT_PUBLIC_phoneNumber }</span>
+              </div>
+              <div className="flex flex-wrap gap-4 text-xs uppercase tracking-[0.24em]">
+                {socials.map((social) => (
+                  <Link
+                    key={social.name}
+                    href={social.url}
+                    target={social.url.startsWith("http") ? "_blank" : undefined}
+                    rel={social.url.startsWith("http") ? "noreferrer" : undefined}
+                    className="inline-flex items-center gap-2 rounded-full border border-border/60 px-3 py-1.5 hover:border-muted-foreground/60 hover:text-foreground transition-colors"
+                  >
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground/10 text-foreground">
+                      {socialIconMap[social.name] ?? (
+                        <span aria-hidden="true" className="text-xs font-semibold">
+                          {social.name.charAt(0)}
+                        </span>
+                      )}
+                    </span>
+                    <span>{social.name}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </footer>

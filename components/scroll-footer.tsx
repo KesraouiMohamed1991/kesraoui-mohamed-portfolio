@@ -13,6 +13,56 @@ export default function ScrollFooter() {
     if (!el) return
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+    const setStaticState = () => {
+      paths.current.forEach((path, i) => {
+        if (!path) return
+        path.setAttribute('startOffset', `${-40 + i * 40 + 40}%`)
+      })
+      if (inner.current) inner.current.style.transform = 'translateY(0px)'
+    }
+
+    if (prefersReduced) {
+      setStaticState()
+      return
+    }
+
+    const mobileQuery = window.matchMedia('(max-width: 639px)')
+
+    if (mobileQuery.matches) {
+      const duration = 16000
+      const animate = (timestamp: number) => {
+        const progress = ((timestamp % duration) / duration) * 2 // double cycle to keep it lively
+        paths.current.forEach((path, i) => {
+          if (!path) return
+          path.setAttribute('startOffset', `${-40 + i * 40 + progress * 40}%`)
+        })
+        rafRef.current = requestAnimationFrame(animate)
+      }
+      rafRef.current = requestAnimationFrame(animate)
+      if (inner.current) inner.current.style.transform = 'translateY(0px)'
+
+      const handleChange = (event: MediaQueryListEvent) => {
+        if (!event.matches) {
+          if (rafRef.current) cancelAnimationFrame(rafRef.current)
+          setStaticState()
+        }
+      }
+      if (mobileQuery.addEventListener) {
+        mobileQuery.addEventListener('change', handleChange)
+      } else {
+        mobileQuery.addListener(handleChange)
+      }
+
+      return () => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current)
+        if (mobileQuery.removeEventListener) {
+          mobileQuery.removeEventListener('change', handleChange)
+        } else {
+          mobileQuery.removeListener(handleChange)
+        }
+      }
+    }
+
     const update = () => {
       const rect = el.getBoundingClientRect()
       const vh = window.innerHeight || 1
@@ -33,22 +83,29 @@ export default function ScrollFooter() {
       if (inner.current) inner.current.style.transform = `translateY(${y}px)`
     }
 
-    if (prefersReduced) {
-      // set to final state without animating
-      paths.current.forEach((path, i) => {
-        if (!path) return
-        path.setAttribute('startOffset', `${-40 + i * 40 + 40}%`)
-      })
-      if (inner.current) inner.current.style.transform = `translateY(0px)`
-      return
+    const handleScroll = () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      rafRef.current = requestAnimationFrame(update)
     }
 
-    const onFrame = () => {
-      update()
-      rafRef.current = requestAnimationFrame(onFrame)
+    const handleResize = () => {
+      if (mobileQuery.matches) {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current)
+        setStaticState()
+        return
+      }
+      handleScroll()
     }
-    rafRef.current = requestAnimationFrame(onFrame)
-    return () => cancelAnimationFrame(rafRef.current)
+
+    update()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
+    }
   }, [])
 
   return (
@@ -69,7 +126,7 @@ export default function ScrollFooter() {
               startOffset={`${i * 40}%`}
               href="#curve-scroll"
             >
-              Calimo Agency — Branding • Web • Growth
+             Calimo Agency — Création digitale sur mesure
             </textPath>
           ))}
         </text>
